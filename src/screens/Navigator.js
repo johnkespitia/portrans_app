@@ -7,12 +7,14 @@ import ConfigScreen from 'portrans_app/src/screens/ConfigScreen';
 
 const {Navigator, Screen} = createStackNavigator();
 
-export const AppNavigator = () => (
-  <NavigationContainer>
-    <Navigator headerShown={false}>
-      <Screen name="Home" component={HomeScreen} />
-      <Screen name="Login" component={LoginScreen} />
-      <Screen name="Config" component={ConfigScreen} />
-    </Navigator>
-  </NavigationContainer>
-);
+export const AppNavigator = () => {
+  return (
+    <NavigationContainer>
+      <Navigator headerShown={false}>
+        <Screen name="Home" component={HomeScreen} />
+        <Screen name="Login" component={LoginScreen} />
+        <Screen name="Config" component={ConfigScreen} />
+      </Navigator>
+    </NavigationContainer>
+  );
+};

@@ -1,9 +1,18 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, Divider, Layout} from '@ui-kitten/components';
 import {SafeAreaView, Image, StyleSheet} from 'react-native';
-import {ThemeContext} from 'portrans_app/src/theme/theme-context';
+import Storage from 'portrans_app/src/libs/storage';
 import TopBar from 'portrans_app/src/screens/fragments/TopBar';
 const HomeScreen = ({navigation}) => {
+  const [userInfo, setUserInfo] = useState(null);
+  useEffect(() => {
+    const getUser = async () => {
+      const data = await Storage.instance.get('userdata');
+      const user = JSON.parse(data);
+      setUserInfo(user);
+    };
+    getUser();
+  }, []);
   const navigateDetails = () => {
     navigation.navigate('Login');
   };
@@ -16,7 +25,9 @@ const HomeScreen = ({navigation}) => {
           style={styles.logo}
           source={require('portrans_app/src/assets/brand.png')}
         />
-        <Button onPress={navigateDetails}>OPEN DETAILS</Button>
+        {userInfo === null && (
+          <Button onPress={navigateDetails}>Iniciar Sesión</Button>
+        )}
       </Layout>
     </SafeAreaView>
   );
