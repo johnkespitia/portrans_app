@@ -1,3 +1,3 @@
-const URL_API = 'http://192.168.43.164';
+const URL_API = 'http://localhost';
 
 export {URL_API};

@@ -1,4 +1,5 @@
 {
   "name": "portrans_app",
-  "displayName": "Portrans App"
+  "displayName": "Portrans App",
+  "version": "0.1"
 }

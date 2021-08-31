@@ -4,7 +4,7 @@ import {SafeAreaView, Image, StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 
 import TopBar from 'portrans_app/src/screens/fragments/TopBar';
-const HomeScreen = ({route, navigation}) => {
+const MenuScreen = ({route, navigation}) => {
   const user = useSelector(state => state.userReducer.user);
   const navigateDetails = () => {
     navigation.navigate('Login');
@@ -12,7 +12,7 @@ const HomeScreen = ({route, navigation}) => {
   return (
     // eslint-disable-next-line react-native/no-inline-styles
     <SafeAreaView style={{flex: 1}}>
-      <TopBar navigation={navigation} configBtn={true} />
+      <TopBar navigation={navigation} />
       <Divider />
       <Layout style={styles.container}>
         <Image
@@ -40,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default MenuScreen;

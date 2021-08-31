@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useDispatch} from 'react-redux';
 import {
   SafeAreaView,
   StyleSheet,
@@ -16,8 +17,8 @@ import {
 } from '@ui-kitten/components';
 import TopBar from 'portrans_app/src/screens/fragments/TopBar';
 import Http from 'portrans_app/src/libs/http';
-import Storage from 'portrans_app/src/libs/storage';
 import {URL_API} from 'portrans_app/constants';
+import {login} from 'portrans_app/src/store/reducers/users';
 
 const LoginScreen = ({navigation}) => {
   const [username, setUsername] = useState('');
@@ -25,11 +26,12 @@ const LoginScreen = ({navigation}) => {
   const [errorText, setErrorText] = useState('');
   const [loading, setLoading] = useState(false);
   const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const dispatch = useDispatch();
   const toggleSecureEntry = () => {
     setSecureTextEntry(!secureTextEntry);
   };
 
-  const login = async () => {
+  const loginAction = async () => {
     setLoading(true);
     setErrorText('');
     try {
@@ -41,7 +43,7 @@ const LoginScreen = ({navigation}) => {
       if (res.code !== 200) {
         setErrorText('Error en el proceso intente más tarde');
       } else {
-        await Storage.instance.store('userdata', JSON.stringify(res.data));
+        dispatch(login(res.data));
         navigation.navigate('Home');
       }
     } catch (errore) {
@@ -58,7 +60,7 @@ const LoginScreen = ({navigation}) => {
   );
   return (
     <SafeAreaView style={{flex: 1}}>
-      <TopBar navigation={navigation} goBack={true} />
+      <TopBar navigation={navigation} goBack={true} configBtn={true} />
       <Divider />
       <Layout style={styles.topContainer} level="1">
         <Text style={styles.title} category="h5">
@@ -89,7 +91,7 @@ const LoginScreen = ({navigation}) => {
             style={styles.input}
           />
           <Text status="danger">{errorText}</Text>
-          <Button onPress={login} style={styles.input} disabled={loading}>
+          <Button onPress={loginAction} style={styles.input} disabled={loading}>
             Iniciar Sesión
           </Button>
         </Card>

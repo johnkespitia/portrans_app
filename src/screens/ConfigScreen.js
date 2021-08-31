@@ -1,41 +1,67 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Divider, Layout} from '@ui-kitten/components';
+import React from 'react';
+import {Divider, Layout, List, ListItem} from '@ui-kitten/components';
 import {SafeAreaView, StyleSheet} from 'react-native';
-import {ThemeContext} from 'portrans_app/src/theme/theme-context';
+import {useSelector, useDispatch} from 'react-redux';
 import TopBar from 'portrans_app/src/screens/fragments/TopBar';
-import Storage from 'portrans_app/src/libs/storage';
+import {version} from 'portrans_app/app.json';
+import {logout} from 'portrans_app/src/store/reducers/users';
 
 const HomeScreen = ({navigation}) => {
-  const themeContext = React.useContext(ThemeContext);
-  const [userInfo, setUserInfo] = useState(null);
-  useEffect(() => {
-    const getUser = async () => {
-      const data = await Storage.instance.get('userdata');
-      const user = JSON.parse(data);
-      setUserInfo(user);
-    };
-    getUser();
-  }, []);
-  const logout = async () => {
-    await Storage.instance.remove('userdata');
-    setUserInfo(null);
+  const user = useSelector(state => state.userReducer.user);
+  const dispatch = useDispatch();
+  const logoutSession = () => {
+    dispatch(logout());
     navigation.navigate('Home');
   };
+  const goToLogin = async () => {
+    navigation.navigate('Login');
+  };
+
+  const renderItem = ({item, index}) => (
+    <ListItem
+      title={`${item.title}`}
+      description={`${item.description}`}
+      onPress={item.onPress}
+    />
+  );
+  const data_about = [
+    {
+      title: 'Aplicación de PORTRANS',
+      description: '',
+      onPress: () => {},
+    },
+    {
+      title: 'Contacto',
+      description: 'Email: gerencia@portrans.com',
+      onPress: () => {},
+    },
+    {
+      title: 'Versión',
+      description: `${version}`,
+      onPress: () => {},
+    },
+    {
+      title:
+        user !== null && Object.keys(user).length > 0
+          ? 'Cerrar Sesión'
+          : 'Iniciar Sesión',
+      description: '',
+      onPress:
+        user !== null && Object.keys(user).length > 0
+          ? logoutSession
+          : goToLogin,
+    },
+  ];
   return (
     <SafeAreaView style={{flex: 1}}>
-      <TopBar navigation={navigation} goBack={true} />
+      <TopBar navigation={navigation} goBack={true} configBtn={false} />
       <Divider />
-      <Layout style={styles.container}>
-        <Button style={{marginVertical: 4}} onPress={themeContext.toggleTheme}>
-          {themeContext.theme === 'light'
-            ? 'Cambiar a Oscuro'
-            : 'Cambiar a Claro'}
-        </Button>
-        {userInfo !== null && Object.keys(userInfo).length > 0 && (
-          <Button style={{marginVertical: 4}} onPress={logout}>
-            Cerrar Sesión
-          </Button>
-        )}
+      <Layout style={styles.containerList}>
+        <List
+          data={data_about}
+          ItemSeparatorComponent={Divider}
+          renderItem={renderItem}
+        />
       </Layout>
     </SafeAreaView>
   );
@@ -51,6 +77,9 @@ const styles = StyleSheet.create({
     width: 300,
     height: 100,
     resizeMode: 'contain',
+  },
+  containerList: {
+    maxHeight: 200,
   },
 });
 
