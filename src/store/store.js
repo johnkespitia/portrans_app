@@ -3,11 +3,13 @@ import {persistReducer, persistStore} from 'redux-persist';
 import {combineReducers, createStore} from 'redux';
 import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 import userReducer from 'portrans_app/src/store/reducers/users';
+import checklistReducer from 'portrans_app/src/store/reducers/checklist';
 
 const reducers = combineReducers({
   userReducer: userReducer,
-  // other reducers goes here...
+  checklistReducer: checklistReducer,
 });
+
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,

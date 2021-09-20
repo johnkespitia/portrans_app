@@ -7,7 +7,6 @@ class Http {
       let json = await req.json();
       return json;
     } catch (error) {
-      console.log('http get error ', error);
       throw Error(error);
     }
   };
@@ -22,7 +21,6 @@ class Http {
       let json = await req.json();
       return json;
     } catch (error) {
-      console.log('http post error ', error);
       return null;
     }
   };

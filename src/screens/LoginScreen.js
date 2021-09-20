@@ -39,18 +39,20 @@ const LoginScreen = ({navigation}) => {
         username,
         password,
       };
+      console.log(`${URL_API}/employe/loginapp`)
       const res = await Http.instance.post(`${URL_API}/employe/loginapp`, body);
       if (res.code !== 200) {
+        setLoading(false);
         setErrorText('Error en el proceso intente más tarde');
       } else {
+        setLoading(false);
         dispatch(login(res.data));
         navigation.navigate('Home');
       }
     } catch (errore) {
-      console.log(errore);
+      setLoading(false);
       setErrorText('Error en el proceso intente más tarde');
     }
-    setLoading(false);
   };
 
   const renderIcon = props => (

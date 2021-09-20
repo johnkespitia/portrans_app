@@ -5,12 +5,14 @@ import {useSelector, useDispatch} from 'react-redux';
 import TopBar from 'portrans_app/src/screens/fragments/TopBar';
 import {version} from 'portrans_app/app.json';
 import {logout} from 'portrans_app/src/store/reducers/users';
+import {cleanList} from 'portrans_app/src/store/reducers/checklist';
 
-const HomeScreen = ({navigation}) => {
+const ConfigScreen = ({navigation}) => {
   const user = useSelector(state => state.userReducer.user);
   const dispatch = useDispatch();
   const logoutSession = () => {
     dispatch(logout());
+    dispatch(cleanList());
     navigation.navigate('Home');
   };
   const goToLogin = async () => {
@@ -83,4 +85,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default ConfigScreen;
