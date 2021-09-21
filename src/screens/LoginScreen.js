@@ -39,7 +39,6 @@ const LoginScreen = ({navigation}) => {
         username,
         password,
       };
-      console.log(`${URL_API}/employe/loginapp`)
       const res = await Http.instance.post(`${URL_API}/employe/loginapp`, body);
       if (res.code !== 200) {
         setLoading(false);
