@@ -1,9 +1,13 @@
 import {RadioGroup, Radio, Text, Layout} from '@ui-kitten/components';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet} from 'react-native';
 
+const OPTIONS = ['Bueno', 'Malo', 'No Aplica'];
 const GoodBadNotApplyInput = question => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  useEffect(() => {
+    question.onChange(question.id, OPTIONS[0]);
+  }, []);
   return (
     <>
       <Text style={styles.title} category={'label'}>
@@ -12,10 +16,13 @@ const GoodBadNotApplyInput = question => {
       <Layout style={styles.YesNoStyle}>
         <RadioGroup
           selectedIndex={selectedIndex}
-          onChange={index => setSelectedIndex(index)}>
-          <Radio>Bueno</Radio>
-          <Radio>Malo</Radio>
-          <Radio>No Aplica</Radio>
+          onChange={index => {
+            setSelectedIndex(index);
+            question.onChange(question.id, OPTIONS[index]);
+          }}>
+          {OPTIONS.map((item, index) => (
+            <Radio key={index}>{item}</Radio>
+          ))}
         </RadioGroup>
       </Layout>
     </>

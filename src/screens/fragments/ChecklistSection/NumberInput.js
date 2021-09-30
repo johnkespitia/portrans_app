@@ -8,7 +8,10 @@ const NumberInput = question => {
       value={value}
       label={question.question}
       keyboardType={'numeric'}
-      onChangeText={nextValue => setValue(nextValue)}
+      onChangeText={nextValue => {
+        setValue(nextValue);
+        question.onChange(question.id, nextValue);
+      }}
     />
   );
 };

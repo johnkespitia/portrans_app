@@ -1,20 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
-import {Layout, Text} from '@ui-kitten/components';
-import {StyleSheet, ActivityIndicator} from 'react-native';
+import {Layout, Text, Button} from '@ui-kitten/components';
+import {StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import ErrorAlert from 'portrans_app/src/screens/fragments/ErrorAlert';
 import BuildForm from './fragments/ChecklistSection/BuildForm';
+import PreField from './fragments/ChecklistSection/PrefieldForm';
+import {saveAnswers} from 'portrans_app/src/store/reducers/answers';
 
 const ChecklistForm = ({route, navigation}) => {
   const checklist = useSelector(state => state.checklistReducer.checklist);
-  const [errorText, setErrorText] = useState('');
-  const [loading, setLoading] = useState(false);
   const [actualSection, setActualSection] = useState(null);
   const [nextSection, setNextSection] = useState(null);
   const [actualChecklist, setActualChecklist] = useState(null);
+  const [sectionValues, setSectionValues] = useState({});
+  const [finished, setFinished] = useState(false);
+  const [preFields, setPreFields] = useState(true);
   const {id} = route.params;
+  const dispatch = useDispatch();
 
   useEffect(async () => {
     if (checklist === null || checklist === undefined) {
@@ -35,7 +39,7 @@ const ChecklistForm = ({route, navigation}) => {
     }
   });
   useEffect(() => {
-    if (actualSection !== null) {
+    if (actualSection !== null && actualSection !== undefined) {
       setNextSection(
         actualChecklist.sections.find(
           section => section.parent === actualSection.id,
@@ -44,14 +48,70 @@ const ChecklistForm = ({route, navigation}) => {
     }
   });
 
+  const storeAnswers = (name, value) => {
+    setSectionValues({
+      ...sectionValues,
+      [name]: value,
+    });
+  };
+
+  const saveSection = () => {
+    if (preFields) {
+      dispatch(
+        saveAnswers({
+          checklist_id: actualChecklist.id,
+          section_id: 'initial',
+          answers: sectionValues,
+        }),
+      );
+      setPreFields(false);
+    } else {
+      dispatch(
+        saveAnswers({
+          checklist_id: actualChecklist.id,
+          section_id: actualSection.id,
+          answers: sectionValues,
+        }),
+      );
+      if (nextSection !== undefined) {
+        setActualSection(nextSection);
+      } else {
+        setFinished(true);
+        setActualSection({
+          title: 'Checklist Finalizado',
+        });
+      }
+    }
+    setSectionValues({});
+  };
+
   return (
     <Layout style={styles.container}>
       <Text status="success" style={styles.title}>
         {actualSection?.title}
       </Text>
-      <Text status="danger">{errorText}</Text>
-      {loading && <ActivityIndicator color="#000" size="large" />}
-      {actualSection && <BuildForm questions={actualSection.questions} />}
+      {preFields && <PreField storeAnswers={storeAnswers} />}
+      {!preFields && !finished && actualSection && (
+        <BuildForm
+          storeAnswers={storeAnswers}
+          questions={actualSection.questions}
+        />
+      )}
+      {!finished && (
+        <Layout style={styles.layout} level="1">
+          <Button styles={styles.button} onPress={saveSection}>
+            Guardar
+          </Button>
+          {actualSection && nextSection && actualSection.required !== '1' && (
+            <Button status={'warning'} styles={styles.button}>
+              Omitir
+            </Button>
+          )}
+        </Layout>
+      )}
+      {finished && <>
+      <Text>Finalizada</Text>
+      </>}
     </Layout>
   );
 };
@@ -66,6 +126,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#5e72e4',
     paddingTop: 10,
+  },
+  layout: {
+    marginBottom: 0,
+    flexDirection: 'row',
+    marginTop: 5,
+    alignItems: 'baseline',
+  },
+  button: {
+    marginLeft: 50,
   },
 });
 export default ChecklistForm;

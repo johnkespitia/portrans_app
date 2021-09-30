@@ -8,7 +8,10 @@ const TextInput = question => {
     <Input
       value={value}
       label={question.question}
-      onChangeText={nextValue => setValue(nextValue)}
+      onChangeText={nextValue => {
+        setValue(nextValue);
+        question.onChange(question.id, nextValue);
+      }}
     />
   );
 };

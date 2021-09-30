@@ -1,11 +1,15 @@
 import {Toggle, Text, Layout} from '@ui-kitten/components';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet} from 'react-native';
 
 const YesNoInput = question => {
   const [checked, setChecked] = useState(false);
+  useEffect(() => {
+    question.onChange(question.id, checked);
+  }, []);
   const onCheckedChange = isChecked => {
     setChecked(isChecked);
+    question.onChange(question.id, isChecked);
   };
   return (
     <>

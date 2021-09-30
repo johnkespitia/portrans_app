@@ -12,16 +12,18 @@ import ErrorAlert from 'portrans_app/src/screens/fragments/ErrorAlert';
 const renderItem = ({item, index}) => (
   <ListItem title={`${item?.title}`} description={`${item?.description}`} />
 );
-
 const ChecklistSectionScreen = ({route, navigation}) => {
-  const checklist = useSelector(state => state.checklistReducer.checklist);
   const [errorText, setErrorText] = useState('');
+  const [loaded, setLoaded] = useState(false);
   const [actualChecklist, setActualChecklist] = useState(null);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const {id} = route.params;
+  const checklist = useSelector(state =>
+    loaded ? state.checklistReducer.checklist : null,
+  );
   useEffect(async () => {
-    if (checklist.sections === undefined) {
+    if (!loaded) {
       setLoading(true);
       try {
         const res = await Http.instance.get(
@@ -43,14 +45,10 @@ const ChecklistSectionScreen = ({route, navigation}) => {
               sections: res.data,
             }),
           );
+          setLoaded(true);
         }
       } catch (errore) {
         setErrorText('Error en el proceso intente más tarde');
-        ErrorAlert('Las secciones del checklist no pudieron ser cargadas', () =>
-          navigation.navigate('Checklist', {
-            screen: 'Checklists',
-          }),
-        );
         setLoading(false);
       }
     }
@@ -58,11 +56,12 @@ const ChecklistSectionScreen = ({route, navigation}) => {
   }, []);
 
   useEffect(() => {
-    if (actualChecklist === null) {
+    if (actualChecklist === null && checklist != null) {
       let chl = checklist.find(chls => chls.id === id);
       setActualChecklist(chl);
     }
   });
+
   return (
     // eslint-disable-next-line react-native/no-inline-styles
     <Layout style={styles.container}>

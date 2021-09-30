@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {Card, List} from '@ui-kitten/components';
 import {StyleSheet} from 'react-native';
 import {
@@ -16,11 +16,11 @@ import OptionsInput from 'portrans_app/src/screens/fragments/ChecklistSection/Op
 import NumberInput from 'portrans_app/src/screens/fragments/ChecklistSection/NumberInput';
 import CameraInput from 'portrans_app/src/screens/fragments/ChecklistSection/CameraInput';
 
-const BuildForm = ({questions}) => {
+const BuildForm = ({questions, storeAnswers}) => {
   const renderItem = ({item, index}) => {
     return (
       <Card style={styles.question} key={index}>
-        {getInput(item)}
+        {getInput(item, storeAnswers)}
       </Card>
     );
   };
@@ -29,26 +29,26 @@ const BuildForm = ({questions}) => {
   );
 };
 
-const getInput = question => {
+const getInput = (question, storeAnswers) => {
   if (question.question_type_id === YES_NO_INPUT) {
-    return <YesNoInput {...question} />;
+    return <YesNoInput {...question} onChange={storeAnswers} />;
   }
   if (question.question_type_id === OPTIONS_INPUT) {
-    return <OptionsInput {...question} />;
+    return <OptionsInput {...question} onChange={storeAnswers} />;
   }
   if (question.question_type_id === GOOD_BAD_NA_INPUT) {
-    return <GoodBadNAInput {...question} />;
+    return <GoodBadNAInput {...question} onChange={storeAnswers} />;
   }
   if (question.question_type_id === NUMBER_INPUT) {
-    return <NumberInput {...question} />;
+    return <NumberInput {...question} onChange={storeAnswers} />;
   }
   if (question.question_type_id === IMAGE_INPUT) {
-    return <CameraInput {...question} />;
+    return <CameraInput {...question} onChange={storeAnswers} />;
   }
   if (question.question_type_id === TEXT_INPUT) {
-    return <TextInput {...question} />;
+    return <TextInput {...question} onChange={storeAnswers} />;
   } else {
-    return <TextInput {...question} />;
+    return <TextInput {...question} onChange={storeAnswers} />;
   }
 };
 

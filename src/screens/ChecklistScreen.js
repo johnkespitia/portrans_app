@@ -14,7 +14,6 @@ import {useSelector} from 'react-redux';
 import Http from 'portrans_app/src/libs/http';
 import {URL_API} from 'portrans_app/constants';
 import {getList} from 'portrans_app/src/store/reducers/checklist';
-import ErrorAlert from 'portrans_app/src/screens/fragments/ErrorAlert';
 
 const renderItem = ({item, index}) => (
   <ListItem
@@ -35,7 +34,6 @@ const ChecklistScreen = ({route, navigation}) => {
     try {
       setLoading(true);
       const res = await Http.instance.get(`${URL_API}/checklist/getlist`);
-      console.log(res);
       if (res.code !== 200) {
         setErrorText('Error en el proceso intente más tarde');
       } else {
