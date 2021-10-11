@@ -6,6 +6,8 @@ import TopBar from 'portrans_app/src/screens/fragments/TopBar';
 import {version} from 'portrans_app/app.json';
 import {logout} from 'portrans_app/src/store/reducers/users';
 import {cleanList} from 'portrans_app/src/store/reducers/checklist';
+import {cleanAnswers} from 'portrans_app/src/store/reducers/answers';
+import {cleanCars} from 'portrans_app/src/store/reducers/cars';
 
 const ConfigScreen = ({navigation}) => {
   const user = useSelector(state => state.userReducer.user);
@@ -13,6 +15,8 @@ const ConfigScreen = ({navigation}) => {
   const logoutSession = () => {
     dispatch(logout());
     dispatch(cleanList());
+    dispatch(cleanAnswers());
+    dispatch(cleanCars());
     navigation.navigate('Home');
   };
   const goToLogin = async () => {

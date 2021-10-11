@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Button, Text} from '@ui-kitten/components';
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, Platform, StyleSheet, View} from 'react-native';
 import {launchCamera} from 'react-native-image-picker';
 
 const CameraInput = question => {
@@ -16,7 +16,20 @@ const CameraInput = question => {
       setResponse,
     );
   }, []);
-
+  useEffect(() => {
+    if (response) {
+      let data = {
+        name: response.fileName,
+        type: response.type,
+        uri:
+          Platform.OS === 'android'
+            ? response.uri
+            : response.uri.replace('file://', ''),
+      };
+      question.onChange(question.id, data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [response]);
   return (
     <>
       <Text style={styles.title} category={'label'}>

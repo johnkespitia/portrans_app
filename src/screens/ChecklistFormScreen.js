@@ -8,6 +8,8 @@ import ErrorAlert from 'portrans_app/src/screens/fragments/ErrorAlert';
 import BuildForm from './fragments/ChecklistSection/BuildForm';
 import PreField from './fragments/ChecklistSection/PrefieldForm';
 import {saveAnswers} from 'portrans_app/src/store/reducers/answers';
+import Http from 'portrans_app/src/libs/http';
+import {URL_API} from 'portrans_app/constants';
 
 const ChecklistForm = ({route, navigation}) => {
   const checklist = useSelector(state => state.checklistReducer.checklist);
@@ -17,8 +19,22 @@ const ChecklistForm = ({route, navigation}) => {
   const [sectionValues, setSectionValues] = useState({});
   const [finished, setFinished] = useState(false);
   const [preFields, setPreFields] = useState(true);
+  const [startDate] = useState(Date.now());
   const {id} = route.params;
+  const answers = useSelector(state => state.answersReducer.answers);
   const dispatch = useDispatch();
+
+  const SendForm = async () => {
+    try {
+      const res = await Http.instance.post(
+        `${URL_API}/answer/sendanswers`,
+        answers,
+      );
+      if (res.code === 200) {
+        //let chl = checklist.find(chls => chls.id === id);
+      }
+    } catch (errore) {}
+  };
 
   useEffect(async () => {
     if (checklist === null || checklist === undefined) {
@@ -60,6 +76,7 @@ const ChecklistForm = ({route, navigation}) => {
       dispatch(
         saveAnswers({
           checklist_id: actualChecklist.id,
+          date_start: startDate,
           section_id: 'initial',
           answers: sectionValues,
         }),
@@ -69,6 +86,7 @@ const ChecklistForm = ({route, navigation}) => {
       dispatch(
         saveAnswers({
           checklist_id: actualChecklist.id,
+          date_start: startDate,
           section_id: actualSection.id,
           answers: sectionValues,
         }),
@@ -76,7 +94,18 @@ const ChecklistForm = ({route, navigation}) => {
       if (nextSection !== undefined) {
         setActualSection(nextSection);
       } else {
+        dispatch(
+          saveAnswers({
+            checklist_id: actualChecklist.id,
+            date_start: startDate,
+            section_id: 'final',
+            answers: {
+              finish_date: Date.now(),
+            },
+          }),
+        );
         setFinished(true);
+        SendForm();
         setActualSection({
           title: 'Checklist Finalizado',
         });
@@ -109,9 +138,11 @@ const ChecklistForm = ({route, navigation}) => {
           )}
         </Layout>
       )}
-      {finished && <>
-      <Text>Finalizada</Text>
-      </>}
+      {finished && (
+        <>
+          <Text>Finalizada</Text>
+        </>
+      )}
     </Layout>
   );
 };

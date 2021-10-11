@@ -98,6 +98,18 @@ const ChecklistScreen = ({route, navigation}) => {
         title={'Recargar'}>
         Recargar Checklists
       </Button>
+      <Button
+        status="info"
+        size="small"
+        style={styles.reloadBtn}
+        onPress={() => {
+          navigation.navigate('Checklist', {
+            screen: 'ChecklistsHistory',
+          });
+        }}
+        title={'Ver Contestaciones'}>
+        Ver Constestaciones
+      </Button>
     </Layout>
   );
 };

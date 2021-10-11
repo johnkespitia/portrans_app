@@ -9,9 +9,12 @@ export const carsSlice = createSlice({
     getCars: (state, action) => {
       state.cars = action.payload;
     },
+    cleanCars: state => {
+      state.cars = null;
+    },
   },
 });
 
-export const {getCars} = carsSlice.actions;
+export const {getCars, cleanCars} = carsSlice.actions;
 
 export default carsSlice.reducer;

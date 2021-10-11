@@ -37,7 +37,7 @@ const PreField = question => {
     if (!data && cars) {
       setData(cars);
     }
-  }, []);
+  }, [cars]);
   const onSelect = index => {
     setValue(data[index].dni);
     question.storeAnswers('car_id', data[index].id);

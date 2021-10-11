@@ -11,6 +11,7 @@ import ConfigScreen from 'portrans_app/src/screens/ConfigScreen';
 import ChecklistScreen from 'portrans_app/src/screens/ChecklistScreen';
 import ChecklistSectionScreen from 'portrans_app/src/screens/ChecklistSectionScreen';
 import ChecklistFormScreen from 'portrans_app/src/screens/ChecklistFormScreen';
+import HistoryScreen from 'portrans_app/src/screens/HistoryScreen';
 
 const {Navigator, Screen} = createDrawerNavigator();
 const ChecklistStack = createNativeStackNavigator();
@@ -26,6 +27,10 @@ const ChecklistNavigator = ({navigation, state}) => {
       <ChecklistStack.Screen
         name="ChecklistsForm"
         component={ChecklistFormScreen}
+      />
+      <ChecklistStack.Screen
+        name="ChecklistsHistory"
+        component={HistoryScreen}
       />
     </ChecklistStack.Navigator>
   );

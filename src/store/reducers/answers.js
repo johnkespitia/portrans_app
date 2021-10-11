@@ -7,8 +7,13 @@ export const answersSlice = createSlice({
   },
   reducers: {
     saveAnswers: (state, action) => {
+      if (state.answers === null) {
+        state.answers = [];
+      }
       let answerIndex = state.answers.findIndex(
-        answ => (answ.id = action.payload.checklist_id),
+        answ =>
+          answ.id === action.payload.checklist_id &&
+          answ.date_start === action.payload.date_start,
       );
       if (answerIndex >= 0) {
         state.answers[answerIndex].sections.push({
@@ -18,6 +23,7 @@ export const answersSlice = createSlice({
       } else {
         state.answers.push({
           id: action.payload.checklist_id,
+          date_start: action.payload.date_start,
           sections: [
             {
               id: action.payload.section_id,
@@ -27,9 +33,20 @@ export const answersSlice = createSlice({
         });
       }
     },
+    syncAnswer: (state, action) => {
+      let newAnswer = state.answers.map(
+        answ =>
+          answ.id !== action.payload.checklist_id &&
+          answ.date_start !== action.payload.date_start
+      );
+      state.answers = newAnswer;
+    },
+    cleanAnswers: state => {
+      state.answers = null;
+    },
   },
 });
 
-export const {saveAnswers} = answersSlice.actions;
+export const {saveAnswers, cleanAnswers} = answersSlice.actions;
 
 export default answersSlice.reducer;
