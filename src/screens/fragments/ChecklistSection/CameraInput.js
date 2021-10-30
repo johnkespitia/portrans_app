@@ -9,9 +9,13 @@ const CameraInput = question => {
   const onButtonPress = React.useCallback(options => {
     launchCamera(
       {
+        maxHeight: 200,
+        maxWidth: 200,
         saveToPhotos: true,
         mediaType: 'photo',
         includeBase64: false,
+        selectionLimit: 1,
+        cameraType: 'back',
       },
       setResponse,
     );
@@ -19,12 +23,12 @@ const CameraInput = question => {
   useEffect(() => {
     if (response) {
       let data = {
-        name: response.fileName,
-        type: response.type,
+        name: response.assets[0].fileName,
+        type: response.assets[0].type,
         uri:
           Platform.OS === 'android'
-            ? response.uri
-            : response.uri.replace('file://', ''),
+            ? response.assets[0].uri
+            : response.assets[0].uri.replace('file://', ''),
       };
       question.onChange(question.id, data);
     }

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
-import {Layout, Text, Button} from '@ui-kitten/components';
+import {Layout, Text, Button, Card} from '@ui-kitten/components';
 import {StyleSheet} from 'react-native';
 import {useSelector} from 'react-redux';
 import ErrorAlert from 'portrans_app/src/screens/fragments/ErrorAlert';
@@ -20,18 +20,20 @@ const ChecklistForm = ({route, navigation}) => {
   const [finished, setFinished] = useState(false);
   const [preFields, setPreFields] = useState(true);
   const [startDate] = useState(Date.now());
+  const [saved, setSaved] = useState(false);
   const {id} = route.params;
   const answers = useSelector(state => state.answersReducer.answers);
   const dispatch = useDispatch();
 
   const SendForm = async () => {
     try {
-      const res = await Http.instance.post(
+      const res = await Http.instance.sendForm(
         `${URL_API}/answer/sendanswers`,
         answers,
       );
       if (res.code === 200) {
         //let chl = checklist.find(chls => chls.id === id);
+        setSaved(true);
       }
     } catch (errore) {}
   };
@@ -140,7 +142,36 @@ const ChecklistForm = ({route, navigation}) => {
       )}
       {finished && (
         <>
-          <Text>Finalizada</Text>
+          <Text category="h3" style={styles.title}>
+            El checklist fue completado correctamente
+          </Text>
+          {!saved && (
+            <Card status="danger" style={styles.error}>
+              <Text category="label" status="danger">
+                No fue posible hacer enviar las respuestas en este momento,
+                intentalo luego desde la sección de Ver Contestaciones
+              </Text>
+            </Card>
+          )}
+          {saved && (
+            <Card status="success" style={styles.error}>
+              <Text category="label" status="success">
+                Hemos enviado las respuestas al sistema, no la verás en la
+                sección de Ver Contestaciones
+              </Text>
+            </Card>
+          )}
+          <Button
+            onPress={() => {
+              navigation.navigate('Checklist', {
+                screen: 'Checklists',
+                params: {
+                  id: actualChecklist.id,
+                },
+              });
+            }}>
+            Ir a Checklists
+          </Button>
         </>
       )}
     </Layout>
@@ -153,10 +184,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 17,
     fontWeight: 'bold',
     color: '#5e72e4',
     paddingTop: 10,
+    textAlign: 'center',
+    paddingBottom: 30,
+  },
+  error: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 30,
   },
   layout: {
     marginBottom: 0,

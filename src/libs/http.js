@@ -28,8 +28,13 @@ class Http {
   sendForm = async (url, body) => {
     try {
       const data = new FormData();
-      Object.keys(body).forEach(key => {
-        data.append(key, body[key]);
+      data.append('checklist_id', body.id);
+      data.append('start_date', body.date_start);
+      Object.keys(body.sections).forEach(key => {
+        let answers = Object.entries(body.sections[key].answers);
+        answers.forEach(idx => {
+          data.append(idx[0], idx[1]);
+        });
       });
       let req = await fetch(url, {
         method: 'POST',

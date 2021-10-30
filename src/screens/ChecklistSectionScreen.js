@@ -19,9 +19,7 @@ const ChecklistSectionScreen = ({route, navigation}) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const {id} = route.params;
-  const checklist = useSelector(state =>
-    loaded ? state.checklistReducer.checklist : null,
-  );
+  const checklist = useSelector(state => state.checklistReducer.checklist);
   useEffect(async () => {
     if (!loaded) {
       setLoading(true);
@@ -46,6 +44,8 @@ const ChecklistSectionScreen = ({route, navigation}) => {
             }),
           );
           setLoaded(true);
+          let chl = checklist.find(chls => chls.id === id);
+          setActualChecklist(chl);
         }
       } catch (errore) {
         setErrorText('Error en el proceso intente más tarde');
@@ -61,7 +61,6 @@ const ChecklistSectionScreen = ({route, navigation}) => {
       setActualChecklist(chl);
     }
   });
-
   return (
     // eslint-disable-next-line react-native/no-inline-styles
     <Layout style={styles.container}>
@@ -117,6 +116,22 @@ const ChecklistSectionScreen = ({route, navigation}) => {
             </Button>
           </Layout>
         )}
+      {(actualChecklist == null || actualChecklist.sections === undefined) && (
+        <Button
+          status="danger"
+          style={styles.button}
+          onPress={() => {
+            navigation.navigate('Checklist', {
+              screen: 'Checklists',
+              params: {
+                id: actualChecklist.id,
+              },
+            });
+          }}
+          title={'No fue posible cargar el checklist, intente más tarde'}>
+          No fue posible cargar el checklist, intente más tarde
+        </Button>
+      )}
     </Layout>
   );
 };

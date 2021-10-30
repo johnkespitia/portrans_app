@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {useDispatch} from 'react-redux';
 import {Divider, Layout, List, ListItem, Button} from '@ui-kitten/components';
 import {StyleSheet, ActivityIndicator} from 'react-native';
@@ -8,43 +7,49 @@ import Http from 'portrans_app/src/libs/http';
 import {URL_API} from 'portrans_app/constants';
 import {syncAnswer} from 'portrans_app/src/store/reducers/answers';
 
-const renderItem = ({item, index}) => (
-  <ListItem
-    title={`${item?.title}`}
-    description={`${item?.description}`}
-    onPress={item?.onPress}
-    accessoryRight={() => (
-      <Button
-        onPress={() => {
-          SendForm(item);
-        }}
-        size="tiny">
-        Enviar
-      </Button>
-    )}
-  />
-);
-
-const SendForm = async answers => {
-  const dispatch = useDispatch();
-  try {
-    const res = await Http.instance.post(
-      `${URL_API}/answer/sendanswers`,
-      answers,
-    );
-    if (res.code === 200) {
-      dispatch(syncAnswer(answers));
-    }
-  } catch (errore) {}
-};
-
 const HistoryScreen = ({route, navigation}) => {
   const answers = useSelector(state => state.answersReducer.answers);
   const cars = useSelector(state => state.carsReducer.cars);
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+
+  const renderItem = ({item}) => (
+    <ListItem
+      title={`${item?.title}`}
+      description={`${item?.description}`}
+      onPress={item?.onPress}
+      accessoryRight={() => (
+        <Button
+          onPress={() => {
+            SendForm(item.content);
+          }}
+          disabled={loading}
+          size="tiny">
+          {!loading ? 'Enviar' : 'Cargando'}
+        </Button>
+      )}
+    />
+  );
+  // eslint-disable-next-line no-shadow
+  const SendForm = async answers => {
+    setLoading(true);
+    try {
+      const res = await Http.instance.sendForm(
+        `${URL_API}/answer/sendanswers`,
+        answers,
+      );
+      console.log(`${URL_API}/answer/sendanswers`);
+      console.log(res);
+      if (res.code === 200) {
+        //dispatch(syncAnswer(answers));
+      }
+    } catch (errore) {
+      console.log(errore);
+    }
+    setLoading(false);
+  };
 
   return (
-    // eslint-disable-next-line react-native/no-inline-styles
     <Layout style={styles.container}>
       {loading && (
         <ActivityIndicator style={styles.loader} color="#000" size="large" />
@@ -66,6 +71,7 @@ const HistoryScreen = ({route, navigation}) => {
                 description: `Completeada el ${fecha.toLocaleDateString(
                   'es',
                 )} para el vehículo ${carInfo?.dni}`,
+                content: item,
                 onPress: () => {},
               };
             })}

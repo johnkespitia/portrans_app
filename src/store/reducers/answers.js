@@ -37,7 +37,7 @@ export const answersSlice = createSlice({
       let newAnswer = state.answers.map(
         answ =>
           answ.id !== action.payload.checklist_id &&
-          answ.date_start !== action.payload.date_start
+          answ.date_start !== action.payload.date_start,
       );
       state.answers = newAnswer;
     },
